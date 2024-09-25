@@ -45,30 +45,68 @@ console.log(resp);
 
 // Buscar un Usuario por su ID
 
-// const getUserById = (id) => {
-//   try {
+ const getUserById = (id) => {
+   try {
     
-//     if (!id) {
-//       throw new Error("An ID is required");
-//     }
+     if (!id) {
+       throw new Error("An ID is required");
+     }
 
-//     const users = getUsers(PATH_USERS_FILE);
-//     const user = users.find((user) => user.id === id);
+     const users = getUsers(PATH_USERS_FILE);
+     const user = users.find((user) => user.id === id);
 
-//     if (!user) {
-//       throw new Error("User doesn't exist, try a valid one");
-//     }
-//   } catch (error) {
-//     const objError = handleError(error, PATH_USERS_ERROR);
-//     return objError;
-//   }
-// };
+     if (!user) {
+       throw new Error("User doesn't exist, try a valid ID");
+     }
+   } catch (error) {
+     const objError = handleError(error, PATH_USERS_ERROR);
+     return objError;
+   }
+ };
 
 // Agregar nuevo Usuario
 
 const addUser = (userData) => {
   try {
-  } catch (error) {}
+    const userData = { nombre, apellido, email, password };
+
+    if ( !nombre || !apellido || !email || !password ) {
+      throw new Error ("Missing data")
+    }
+
+    if (typeof(nombre || apellido || email !== string)) {
+      throw new Error ("Invalid type of data, must be a string") 
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      throw new Error ("Please use a valid email")
+    }
+
+    const users = getUsers();
+    if (users.find((user) => user.email === email)) {
+      throw new Error("Email already registered");
+    }
+
+    const hashPassword = createHash("sha256").update(password).digest("hex")
+
+    const newUser = {
+      id: randomUUID,
+      nombre,
+      apellido,
+      email,
+      password: hashPassword,
+      loggedIn: false
+    }
+
+    users.push(newUser);
+    writeFileSync(PATH_USERS_FILE, JSON.stringify(users));
+    return newUser;
+
+  } catch (error) {
+    const objError = handleError(error, PATH_USERS_ERROR);
+    return objError;
+  }
 };
 
 // Actualizar un Usuario buscando por ID

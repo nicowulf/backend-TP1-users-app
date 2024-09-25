@@ -1,9 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { randomUUID, createHash } from "node:crypto";
-import {
-  createUserObject,
-  createUpdateUserObject,
-} from "./utils/createUserObject.js";
+import { randomUUID } from "node:crypto";
+import { createUserObject, createUpdateUserObject } from "./utils/createUserObject.js";
+import { validateEmail } from "./utils/validateEmail.js";
+import { hashPassword } from "./utils/hashPassword.js";
 import { handleError } from "./utils/handleError.js";
 import dotenv from "dotenv";
 
@@ -68,7 +67,7 @@ console.log(resp);
 
 const addUser = (userData) => {
   try {
-    const userData = { nombre, apellido, email, password };
+    const { nombre, apellido, email, password } = userData;
 
     if ( !nombre || !apellido || !email || !password ) {
       throw new Error ("Missing data")
@@ -78,17 +77,7 @@ const addUser = (userData) => {
       throw new Error ("Invalid type of data, must be a string") 
     }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      throw new Error ("Please use a valid email")
-    }
-
-    const users = getUsers();
-    if (users.find((user) => user.email === email)) {
-      throw new Error("Email already registered");
-    }
-
-    const hashPassword = createHash("sha256").update(password).digest("hex")
+    validateEmail(email, users);
 
     const newUser = {
       id: randomUUID,
@@ -111,9 +100,42 @@ const addUser = (userData) => {
 
 // Actualizar un Usuario buscando por ID
 
-const updateUser = (userData) => {
-  try {
-  } catch (error) {}
+const updateUser = (id, userData) => {
+  try { 
+
+    const { id, nombre, apellido, email, password } = userData;
+    
+    if (!id || !userData) {
+      throw new Error("ID or data missing");
+    }
+
+    const users = getUsers();
+    const user = users.find((user) => user.id === id);
+
+    if (!user) {
+      throw new Error ("User not found")
+    }
+
+    const updateData = createUpdateUserObject(userData);
+
+    if (updateData.nombre) user.nombre = updateData.nombre;
+    if (updateData.apellido) user.apellido = updateData.apellido;
+
+    if (updateData.email) {
+      validateEmail(updateData.email, users);
+      user.email = updateData.email;
+    }
+
+    if (userData.password) {
+      user.password = hashPassword(userData.password);
+    }
+    
+    writeFileSync(PATH_USERS_FILE, JSON.stringify(users));
+    return user;
+
+  } catch (error) {
+    const objError = handleError(error, PATH_USERS_ERROR);
+    return objError;}
 };
 
 // Borrar un Usuario buscando por su ID

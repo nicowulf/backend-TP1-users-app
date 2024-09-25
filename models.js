@@ -1,6 +1,9 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { randomUUID, createHash } from "node:crypto";
-import { createUserObject, createUpdateUserObject,} from "./utils/createObjectUser.js";
+import {
+  createUserObject,
+  createUpdateUserObject,
+} from "./utils/createUserObject.js";
 import { handleError } from "./utils/handleError.js";
 import dotenv from "dotenv";
 
@@ -37,12 +40,29 @@ const getUsers = (urlFile) => {
   }
 };
 
+const resp = getUsers(PATH_FILE_USER);
+console.log(resp);
+
 // Buscar un Usuario por su ID
 
-const getUserById = (id) => {
-  try {
-  } catch (error) {}
-};
+// const getUserById = (id) => {
+//   try {
+    
+//     if (!id) {
+//       throw new Error("An ID is required");
+//     }
+
+//     const users = getUsers(PATH_USERS_FILE);
+//     const user = users.find((user) => user.id === id);
+
+//     if (!user) {
+//       throw new Error("User doesn't exist, try a valid one");
+//     }
+//   } catch (error) {
+//     const objError = handleError(error, PATH_USERS_ERROR);
+//     return objError;
+//   }
+// };
 
 // Agregar nuevo Usuario
 

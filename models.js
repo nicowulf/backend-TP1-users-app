@@ -1,44 +1,64 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { randomUUID } from "node:crypto";
-// Averiguar que importar de NODE para realizar el hash del pass
-// Averiguar como "activar" la lectura de las variables de entorno del archivo .env (dotenv)
+import { randomUUID, createHash } from "node:crypto";
+import { createUserObject, createUpdateUserObject,} from "./utils/createObjectUser.js";
 import { handleError } from "./utils/handleError.js";
+import dotenv from "dotenv";
 
-// 1° recuperar variables de entorno
+// Variables de entorno
+dotenv.config();
+const PATH_USERS_FILE = process.env.PATH_USERS_FILE;
+const PATH_USERS_ERROR = process.env.PATH_USERS_ERROR;
 
-// 2° Declarar los metodos
 
-const getUsers = () => {
+// Métodos
+// Traer la lista de Usuarios
+
+const getUsers = (urlFile) => {
   try {
-  } catch (error) {
-    // const objError = handleError()
-    // return objError;
+    if (!urlFile) {
+      throw new Error("Access denied");
+    }
+
+    const existsFile = existsSync(urlFile);
+
+    if (!existsFile) {
+      writeFileSync(PATH_USERS_FILE, JSON.stringify([]));
+      return []
+    }
+
+    const users = JSON.parse(readFileSync(PATH_USERS_FILE));
+    return users;
+
+    }
+    
+  catch (error) {
+    const objError = handleError(error, PATH_USERS_ERROR);
+    return objError;
   }
 };
+
+// Buscar un Usuario por su ID
 
 const getUserById = (id) => {
   try {
   } catch (error) {}
 };
 
-// addUser recibe un objeto con toda la data para el nuevo usuario
-// valida que esten los datos míminos para añadir un nuevo usuario
-// valida que el nombre sea un string
-// valida que el apellido sea un string
-// valida que el email sea un string y que no se repita
-// hashea la contraseña antes de registrar al usuario
+// Agregar nuevo Usuario
+
 const addUser = (userData) => {
   try {
   } catch (error) {}
 };
 
-// todos los datos del usuario seleccionado se podrían modificar menos el ID
-// si se modifica la pass debería ser nuevamente hasheada
-// si se modifica el email, validar que este no exista
+// Actualizar un Usuario buscando por ID
+
 const updateUser = (userData) => {
   try {
   } catch (error) {}
 };
+
+// Borrar un Usuario buscando por su ID
 
 const deleteUser = (id) => {
   try {

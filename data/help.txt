@@ -1,0 +1,8 @@
+Valid commands you can use:
+
+node index.js help -> information about commands
+node index.js list -> list all registered Users 
+node index.js search "id" -> search a User by id
+node index.js add "Nombre" "Apellido" "Email" "Password" -> create new User with the passed args.
+node index.js update "id" "Nombre" "Apellido" "Email" "Password" -> update User with the new args.
+node index.js delete "id" -> delete User by his id.

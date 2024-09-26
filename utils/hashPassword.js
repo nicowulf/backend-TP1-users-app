@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
 
-const hashPassword = createHash("sha256").update(password).digest("hex");
+const hashPassword  = (password) => {
+  return createHash("sha256").update(password).digest("hex");
+};
 
 export { hashPassword }

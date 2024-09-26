@@ -39,9 +39,6 @@ const getUsers = (urlFile) => {
   }
 };
 
-const resp = getUsers(PATH_FILE_USER);
-console.log(resp);
-
 // Buscar un Usuario por su ID
 
  const getUserById = (id) => {
